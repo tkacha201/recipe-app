@@ -21,11 +21,10 @@ function ProtectedRoute({ children }) {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         setIsAuthorized(true);
       } else {
-        console.error("Failed to refresh token:", res.statusText);
         setIsAuthorized(false);
       }
     } catch (error) {
-      console.error("Error refreshing token:", error);
+      console.log(error);
       setIsAuthorized(false);
     }
   };
@@ -51,7 +50,7 @@ function ProtectedRoute({ children }) {
     return <div>Loading...</div>;
   }
 
-  return isAuthorized ? children : <Navigate to="/login" replace />;
+  return isAuthorized ? children : <Navigate to="/login" />;
 }
 
 export default ProtectedRoute;
