@@ -7,14 +7,16 @@ import { jwtDecode } from "jwt-decode";
 const Navbar = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
+  const [displayName, setDisplayName] = useState("");
 
   useEffect(() => {
-    const fetchUsername = async () => {
+    const fetchUserInfo = async () => {
       const token = localStorage.getItem(ACCESS_TOKEN);
       if (token) {
         try {
           const decoded = jwtDecode(token);
           const userId = decoded.user_id;
+          setUsername(decoded.username);
 
           const response = await fetch(
             `http://localhost:8000/api/user/${userId}/`,
@@ -27,15 +29,15 @@ const Navbar = () => {
 
           if (response.ok) {
             const data = await response.json();
-            setUsername(data.username);
+            setDisplayName(data.profile?.display_name || "");
           }
         } catch (error) {
-          console.error("Error fetching username:", error);
+          console.error("Error fetching user info:", error);
         }
       }
     };
 
-    fetchUsername();
+    fetchUserInfo();
   }, []);
 
   const handleLogout = () => {
@@ -49,6 +51,13 @@ const Navbar = () => {
     navigate("/login", { replace: true });
   };
 
+  const handleProfile = () => {
+    navigate("/profile");
+  };
+
+  // Use display name if available, otherwise use username
+  const greetingName = displayName || username;
+
   return (
     <nav className="navbar">
       <div className="nav-brand" onClick={() => navigate("/")}>
@@ -58,7 +67,7 @@ const Navbar = () => {
         <span className="brand-text">TastyHub</span>
       </div>
       <div className="nav-buttons">
-        <span className="user-greeting">Hello, {username}</span>
+        <span className="user-greeting">Hello, {greetingName}</span>
         <button className="nav-btn home-btn" onClick={() => navigate("/")}>
           Home
         </button>
@@ -67,6 +76,9 @@ const Navbar = () => {
           onClick={() => navigate("/create-recipe")}
         >
           Create Recipe
+        </button>
+        <button className="nav-btn profile-btn" onClick={handleProfile}>
+          Profile
         </button>
         <button className="nav-btn logout-btn" onClick={handleLogout}>
           Logout

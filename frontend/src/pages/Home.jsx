@@ -1,79 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api";
-import Navbar from "../components/Navbar";
 import Recipe from "../components/Recipe";
 import "../styles/Home.css";
-import { jwtDecode } from "jwt-decode";
 import { ACCESS_TOKEN } from "../constants";
+import api from "../api";
 
-function Home() {
+const Home = () => {
   const navigate = useNavigate();
   const [recipes, setRecipes] = useState([]);
-  const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
-    if (!token) {
-      navigate("/login", { replace: true });
-      return;
-    }
-
-    const fetchData = async () => {
-      try {
-        const decoded = jwtDecode(token);
-        const userId = decoded.user_id;
-
-        // Fetch user details
-        const userResponse = await fetch(
-          `http://localhost:8000/api/user/${userId}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!userResponse.ok) {
-          throw new Error("Failed to fetch user details");
-        }
-
-        const userData = await userResponse.json();
-        setUsername(userData.username);
-
-        // Fetch recipes
-        const recipesResponse = await fetch(
-          "http://localhost:8000/api/recipes/",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!recipesResponse.ok) {
-          throw new Error("Failed to fetch recipes");
-        }
-
-        const recipesData = await recipesResponse.json();
-        setRecipes(recipesData);
-      } catch (err) {
-        console.error("Error:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem(ACCESS_TOKEN);
+      if (!token) {
+        navigate("/login", { replace: true });
+        return;
       }
-    };
 
+      // Fetch recipes using the API instance
+      const response = await api.get("/api/recipes/");
+      setRecipes(response.data);
+    } catch (err) {
+      console.error("Error fetching recipes:", err);
+      setError(err.response?.data?.detail || "Failed to fetch recipes");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [navigate]);
 
   if (loading) {
     return (
       <div className="home-container">
-        <Navbar />
         <div className="content">
           <div className="loading">Loading...</div>
         </div>
@@ -84,9 +47,18 @@ function Home() {
   if (error) {
     return (
       <div className="home-container">
-        <Navbar />
         <div className="content">
           <div className="error">Error: {error}</div>
+          <button
+            className="retry-btn"
+            onClick={() => {
+              setLoading(true);
+              setError(null);
+              fetchData();
+            }}
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -94,7 +66,6 @@ function Home() {
 
   return (
     <div className="home-container">
-      <Navbar />
       <div className="content">
         <div className="hero-section">
           <div className="hero-content">
@@ -121,6 +92,6 @@ function Home() {
       </div>
     </div>
   );
-}
+};
 
 export default Home;

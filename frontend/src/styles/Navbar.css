@@ -38,6 +38,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: nowrap;
 }
 
 .user-greeting {
@@ -45,6 +46,7 @@
   color: #333;
   margin-right: 1rem;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .nav-btn {
@@ -54,11 +56,15 @@
   cursor: pointer;
   font-weight: 500;
   transition: all 0.2s ease;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .home-btn {
   background-color: #f0f0f0;
   color: #333;
+  min-width: 80px;
+  text-align: center;
 }
 
 .home-btn:hover {
@@ -68,15 +74,30 @@
 .create-btn {
   background-color: #4caf50;
   color: white;
+  min-width: 120px;
+  text-align: center;
 }
 
 .create-btn:hover {
   background-color: #45a049;
 }
 
+.profile-btn {
+  background-color: #2196f3;
+  color: white;
+  min-width: 80px;
+  text-align: center;
+}
+
+.profile-btn:hover {
+  background-color: #1976d2;
+}
+
 .logout-btn {
   background-color: #f44336;
   color: white;
+  min-width: 80px;
+  text-align: center;
 }
 
 .logout-btn:hover {
@@ -95,10 +116,10 @@
   .nav-btn {
     padding: 0.5rem;
     font-size: 0.9rem;
+    min-width: 60px;
   }
 
   .user-greeting {
-    font-size: 0.9rem;
-    margin-right: 0.5rem;
+    display: none;
   }
 }
