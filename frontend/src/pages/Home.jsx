@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import api from "../api";
 import Recipe from "../components/Recipe";
 import "../styles/Home.css";
+import { jwtDecode } from "jwt-decode";
+import { ACCESS_TOKEN } from "../constants";
 
 function Home() {
   const navigate = useNavigate();
   const [recipes, setRecipes] = useState([]);
+  const [username, setUsername] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [prepTime, setPrepTime] = useState("");
@@ -18,8 +21,55 @@ function Home() {
   const [instructions, setInstructions] = useState([""]);
 
   useEffect(() => {
-    getRecipes();
-  }, []);
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    console.log("Token:", token); // Debug log
+
+    if (token) {
+      const decoded = jwtDecode(token);
+      const userId = decoded.user_id;
+      console.log("User ID:", userId); // Debug log
+
+      // Fetch user details
+      fetch(`http://localhost:8000/api/user/${userId}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          console.log("User response:", response); // Debug log
+          return response.json();
+        })
+        .then((data) => {
+          console.log("User data:", data); // Debug log
+          setUsername(data.username);
+        })
+        .catch((error) => {
+          console.error("Error fetching user details:", error);
+        });
+
+      // Fetch recipes
+      fetch("http://localhost:8000/api/recipes/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          console.log("Recipes response:", response); // Debug log
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Recipes data:", data); // Debug log
+          setRecipes(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching recipes:", error);
+        });
+    } else {
+      console.log("No token found"); // Debug log
+      // Redirect to login if no token
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const handleLogout = () => {
     navigate("/logout");
@@ -181,6 +231,7 @@ function Home() {
           <h1>TastyHub</h1>
         </div>
         <div className="header-buttons">
+          <span className="user-greeting">Hello, {username}</span>
           <button className="create-recipe-btn" onClick={handleCreateRecipe}>
             Create Recipe
           </button>
@@ -201,16 +252,17 @@ function Home() {
       </div>
 
       <div className="recipes-feed">
-        <h2>Recipe Feed</h2>
-        <p className="feed-description">All recipes from all users</p>
-        {recipes.map((recipe) => (
-          <Recipe
-            recipe={recipe}
-            onDelete={deleteRecipe}
-            onUpdate={updateRecipe}
-            key={recipe.id}
-          />
-        ))}
+        <h2>Popular Recipes</h2>
+        <div className="recipe-grid">
+          {recipes.map((recipe) => (
+            <Recipe
+              recipe={recipe}
+              onDelete={deleteRecipe}
+              onUpdate={updateRecipe}
+              key={recipe.id}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

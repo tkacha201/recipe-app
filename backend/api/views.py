@@ -39,7 +39,19 @@ class RecipeUpdate(generics.UpdateAPIView):
         return Recipe.objects.filter(author=user)
 
 
+class RecipeDetail(generics.RetrieveAPIView):
+    serializer_class = RecipeSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Recipe.objects.all()
+
+
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
+
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]

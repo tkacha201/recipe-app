@@ -39,6 +39,14 @@
 .header-buttons {
   display: flex;
   gap: 10px;
+  align-items: center;
+}
+
+.user-greeting {
+  font-size: 16px;
+  color: #333;
+  margin-right: 10px;
+  font-weight: 500;
 }
 
 .create-recipe-btn {
@@ -144,12 +152,14 @@
 .recipes-feed {
   grid-column: 1;
   width: 100%;
+  padding: 2rem 0;
 }
 
 .recipes-feed h2 {
+  text-align: center;
+  margin-bottom: 2rem;
   color: #333;
-  font-size: 24px;
-  margin-bottom: 10px;
+  font-size: 2rem;
 }
 
 .feed-description {
@@ -365,4 +375,11 @@ textarea {
   .hero-content p {
     font-size: 16px;
   }
+}
+
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
 }

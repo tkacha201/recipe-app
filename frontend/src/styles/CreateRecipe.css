@@ -1,4 +1,4 @@
-.create-recipe-page {
+.create-recipe-container {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
@@ -8,8 +8,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #eee;
   margin-bottom: 30px;
 }
 
@@ -20,7 +18,7 @@
 }
 
 .back-btn {
-  background-color: #6c757d;
+  background-color: #666;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -31,87 +29,94 @@
 }
 
 .back-btn:hover {
-  background-color: #5a6268;
+  background-color: #555;
 }
 
-.create-recipe-container {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.recipe-form {
+.create-recipe-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
 }
 
 .form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-label {
-  font-weight: 500;
-  color: #444;
-}
-
-input[type="text"],
-input[type="number"],
-input[type="url"],
-textarea {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.tags-input {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
+.form-row h3 {
+  margin: 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.form-input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 100%;
+}
+
+.form-textarea {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+}
+
+.time-inputs {
+  display: flex;
+  gap: 20px;
+}
+
+.time-inputs .form-input {
+  flex: 1;
+}
+
 .tags-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .tag {
-  background: #e9ecef;
-  padding: 4px 8px;
-  border-radius: 4px;
+  background-color: #e0e0e0;
+  padding: 5px 10px;
+  border-radius: 15px;
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 14px;
+  gap: 5px;
 }
 
-.remove-tag {
+.remove-tag-btn {
   background: none;
   border: none;
   color: #666;
   cursor: pointer;
-  font-size: 16px;
-  padding: 0 4px;
+  font-size: 18px;
+  padding: 0;
+  line-height: 1;
 }
 
-.remove-tag:hover {
-  color: #dc3545;
+.tag-input-container {
+  display: flex;
+  gap: 10px;
+}
+
+.add-tag-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  white-space: nowrap;
 }
 
 .ingredient-row,
@@ -121,78 +126,79 @@ textarea {
   margin-bottom: 10px;
 }
 
-.ingredient-row input {
+.ingredient-row .form-input:first-child {
+  flex: 2;
+}
+
+.ingredient-row .form-input:last-child {
   flex: 1;
 }
 
 .instruction-row {
-  position: relative;
+  flex-direction: column;
 }
 
-.step-number {
-  position: absolute;
-  left: -25px;
-  top: 10px;
-  color: #666;
-  font-size: 14px;
-}
-
-.instruction-row textarea {
-  flex: 1;
+.instruction-row .form-textarea {
+  margin-bottom: 10px;
 }
 
 .remove-btn {
-  background: none;
-  border: none;
-  color: #666;
-  cursor: pointer;
-  font-size: 18px;
-  padding: 0 8px;
-  display: flex;
-  align-items: center;
-}
-
-.remove-btn:hover {
-  color: #dc3545;
-}
-
-.add-btn {
-  background: #e9ecef;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  color: #444;
-  cursor: pointer;
-  font-size: 14px;
-  align-self: flex-start;
-}
-
-.add-btn:hover {
-  background: #dee2e6;
-}
-
-.form-actions {
-  margin-top: 20px;
-}
-
-.submit-btn {
-  background: #007bff;
+  background-color: #f44336;
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 12px 20px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
-  font-weight: 500;
-  width: 100%;
+  white-space: nowrap;
+}
+
+.add-btn {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  align-self: flex-start;
+}
+
+.submit-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 20px;
+  align-self: flex-start;
 }
 
 .submit-btn:hover {
-  background: #0056b3;
+  background-color: #388e3c;
 }
 
+/* Responsive design */
 @media (max-width: 768px) {
-  .form-row {
-    grid-template-columns: 1fr;
+  .time-inputs {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ingredient-row {
+    flex-direction: column;
+  }
+
+  .ingredient-row .form-input {
+    width: 100%;
+  }
+
+  .remove-btn,
+  .add-btn,
+  .submit-btn {
+    width: 100%;
   }
 }
