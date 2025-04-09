@@ -25,6 +25,10 @@ function Home() {
     navigate("/logout");
   };
 
+  const handleCreateRecipe = () => {
+    navigate("/create-recipe");
+  };
+
   const getRecipes = () => {
     api
       .get("/api/recipes/")
@@ -166,198 +170,47 @@ function Home() {
   return (
     <div className="home-container">
       <div className="header">
-        <h1>Recipe App</h1>
-        <button className="logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
+        <div className="logo">
+          <svg
+            className="chef-hat-icon"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M12 2C9.5 2 7.5 3.5 7 5.5C7 5.5 7 5.5 7 5.5C5.5 5.5 4 6.5 4 8C4 9.5 5 10.5 6.5 10.5C6.5 10.5 6.5 10.5 6.5 10.5C6.5 12.5 7.5 14 9 14.5V19H15V14.5C16.5 14 17.5 12.5 17.5 10.5C17.5 10.5 17.5 10.5 17.5 10.5C19 10.5 20 9.5 20 8C20 6.5 18.5 5.5 17 5.5C17 5.5 17 5.5 17 5.5C16.5 3.5 14.5 2 12 2Z" />
+          </svg>
+          <h1>TastyHub</h1>
+        </div>
+        <div className="header-buttons">
+          <button className="create-recipe-btn" onClick={handleCreateRecipe}>
+            Create Recipe
+          </button>
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
       </div>
-      <div className="content-container">
-        <div className="recipes-feed">
-          <h2>Recipe Feed</h2>
-          <p className="feed-description">All recipes from all users</p>
-          {recipes.map((recipe) => (
-            <Recipe
-              recipe={recipe}
-              onDelete={deleteRecipe}
-              onUpdate={updateRecipe}
-              key={recipe.id}
-            />
-          ))}
+
+      <div className="hero-section">
+        <div className="hero-content">
+          <h2>Share Your Favorite Recipes With the World</h2>
+          <p>Join our community of food lovers and discover amazing recipes</p>
+          <button className="hero-cta-btn" onClick={handleCreateRecipe}>
+            Share a Recipe
+          </button>
         </div>
-        <div className="create-recipe-section">
-          <h2>Create a Recipe</h2>
-          <form onSubmit={createRecipe} className="recipe-form">
-            <div className="form-group">
-              <label htmlFor="recipeTitle">Recipe Title</label>
-              <input
-                type="text"
-                id="recipeTitle"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-            </div>
+      </div>
 
-            <div className="form-group">
-              <label htmlFor="recipeDescription">Description</label>
-              <textarea
-                id="recipeDescription"
-                rows="3"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              ></textarea>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="prepTime">Prep Time (minutes)</label>
-                <input
-                  type="number"
-                  id="prepTime"
-                  value={prepTime}
-                  onChange={(e) => setPrepTime(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="cookTime">Cook Time (minutes)</label>
-                <input
-                  type="number"
-                  id="cookTime"
-                  value={cookTime}
-                  onChange={(e) => setCookTime(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="recipeImage">Image URL</label>
-              <input
-                type="url"
-                id="recipeImage"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="recipeTags">Tags</label>
-              <div className="tags-input">
-                <input
-                  type="text"
-                  id="recipeTags"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddTag(e);
-                    }
-                  }}
-                  placeholder="Add a tag and press Enter"
-                />
-                <div className="tags-container">
-                  {tags.map((tag, index) => (
-                    <span key={index} className="tag">
-                      {tag}
-                      <button
-                        type="button"
-                        className="remove-tag"
-                        onClick={() => handleRemoveTag(index)}
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label>Ingredients</label>
-              <div id="ingredientsList">
-                {ingredients.map((ingredient, index) => (
-                  <div key={index} className="ingredient-row">
-                    <input
-                      type="text"
-                      placeholder="Ingredient"
-                      value={ingredient.name}
-                      onChange={(e) =>
-                        handleIngredientChange(index, "name", e.target.value)
-                      }
-                      required
-                    />
-                    <input
-                      type="text"
-                      placeholder="Amount"
-                      value={ingredient.amount}
-                      onChange={(e) =>
-                        handleIngredientChange(index, "amount", e.target.value)
-                      }
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="remove-btn"
-                      onClick={() => handleRemoveIngredient(index)}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <button
-                type="button"
-                className="add-btn"
-                onClick={handleAddIngredient}
-              >
-                Add Ingredient
-              </button>
-            </div>
-
-            <div className="form-group">
-              <label>Instructions</label>
-              <div id="instructionsList">
-                {instructions.map((instruction, index) => (
-                  <div key={index} className="instruction-row">
-                    <span className="step-number">{index + 1}</span>
-                    <textarea
-                      placeholder="Instruction step"
-                      value={instruction}
-                      onChange={(e) =>
-                        handleInstructionChange(index, e.target.value)
-                      }
-                      required
-                    ></textarea>
-                    <button
-                      type="button"
-                      className="remove-btn"
-                      onClick={() => handleRemoveInstruction(index)}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <button
-                type="button"
-                className="add-btn"
-                onClick={handleAddInstruction}
-              >
-                Add Step
-              </button>
-            </div>
-
-            <div className="form-actions">
-              <button type="submit" className="submit-btn">
-                Create Recipe
-              </button>
-            </div>
-          </form>
-        </div>
+      <div className="recipes-feed">
+        <h2>Recipe Feed</h2>
+        <p className="feed-description">All recipes from all users</p>
+        {recipes.map((recipe) => (
+          <Recipe
+            recipe={recipe}
+            onDelete={deleteRecipe}
+            onUpdate={updateRecipe}
+            key={recipe.id}
+          />
+        ))}
       </div>
     </div>
   );
