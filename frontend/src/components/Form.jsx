@@ -20,20 +20,24 @@ function Form({ route, method }) {
     try {
       const res = await api.post(route, { username, password });
       if (method === "login") {
+        // Store tokens
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+        localStorage.setItem("token", res.data.access); // For backward compatibility
 
         // Get user ID from the token
         const token = res.data.access;
         const tokenPayload = JSON.parse(atob(token.split(".")[1]));
         localStorage.setItem("user_id", tokenPayload.user_id);
 
-        navigate("/");
+        // Redirect to home page
+        navigate("/", { replace: true });
       } else {
         navigate("/login");
       }
     } catch (error) {
-      alert(error);
+      console.error("Error:", error);
+      alert(error.response?.data?.detail || "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -48,6 +52,7 @@ function Form({ route, method }) {
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         placeholder="Username"
+        required
       />
       <input
         className="form-input"
@@ -55,9 +60,10 @@ function Form({ route, method }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
+        required
       />
       {loading && <LoadingIndicator />}
-      <button className="form-button" type="submit">
+      <button className="form-button" type="submit" disabled={loading}>
         {name}
       </button>
     </form>
