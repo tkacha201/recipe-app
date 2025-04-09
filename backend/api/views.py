@@ -1,18 +1,18 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializer, NoteSerializer
+from .serializers import UserSerializer, RecipeSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Note
+from .models import Recipe
 
 
-class NoteListCreate(generics.ListCreateAPIView):
-    serializer_class = NoteSerializer
+class RecipeListCreate(generics.ListCreateAPIView):
+    serializer_class = RecipeSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
+        # Return all recipes instead of filtering by author
+        return Recipe.objects.all().order_by('-created_at')
 
     def perform_create(self, serializer):
         if serializer.is_valid():
@@ -21,13 +21,22 @@ class NoteListCreate(generics.ListCreateAPIView):
             print(serializer.errors)
 
 
-class NoteDelete(generics.DestroyAPIView):
-    serializer_class = NoteSerializer
+class RecipeDelete(generics.DestroyAPIView):
+    serializer_class = RecipeSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
-        return Note.objects.filter(author=user)
+        return Recipe.objects.filter(author=user)
+
+
+class RecipeUpdate(generics.UpdateAPIView):
+    serializer_class = RecipeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Recipe.objects.filter(author=user)
 
 
 class CreateUserView(generics.CreateAPIView):

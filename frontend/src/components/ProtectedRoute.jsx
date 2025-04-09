@@ -19,6 +19,12 @@ function ProtectedRoute({ children }) {
       });
       if (res.status === 200) {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
+
+        // Ensure user_id is set from the new token
+        const token = res.data.access;
+        const tokenPayload = JSON.parse(atob(token.split(".")[1]));
+        localStorage.setItem("user_id", tokenPayload.user_id);
+
         setIsAuthorized(true);
       } else {
         setIsAuthorized(false);
@@ -42,6 +48,10 @@ function ProtectedRoute({ children }) {
     if (tokenExpiration < now) {
       await refreshToken();
     } else {
+      // Ensure user_id is set from the current token
+      if (!localStorage.getItem("user_id")) {
+        localStorage.setItem("user_id", decoded.user_id);
+      }
       setIsAuthorized(true);
     }
   };

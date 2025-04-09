@@ -22,6 +22,12 @@ function Form({ route, method }) {
       if (method === "login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+
+        // Get user ID from the token
+        const token = res.data.access;
+        const tokenPayload = JSON.parse(atob(token.split(".")[1]));
+        localStorage.setItem("user_id", tokenPayload.user_id);
+
         navigate("/");
       } else {
         navigate("/login");

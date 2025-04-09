@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note
+from .models import Recipe
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -15,8 +15,23 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class NoteSerializer(serializers.ModelSerializer):
+class RecipeSerializer(serializers.ModelSerializer):
+    author_username = serializers.CharField(source='author.username', read_only=True)
+    
     class Meta:
-        model = Note
-        fields = ["id", "title", "content", "created_at", "author"]
+        model = Recipe
+        fields = [
+            "id", 
+            "title", 
+            "description", 
+            "prep_time", 
+            "cook_time", 
+            "image_url", 
+            "tags", 
+            "ingredients", 
+            "instructions", 
+            "created_at", 
+            "author", 
+            "author_username"
+        ]
         extra_kwargs = {"author": {"read_only": True}}

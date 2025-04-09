@@ -1,83 +1,364 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api";
-import Note from "../components/Note";
+import Recipe from "../components/Recipe";
 import "../styles/Home.css";
 
 function Home() {
-  const [notes, setNotes] = useState([]);
-  const [content, setContent] = useState("");
+  const navigate = useNavigate();
+  const [recipes, setRecipes] = useState([]);
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [prepTime, setPrepTime] = useState("");
+  const [cookTime, setCookTime] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState("");
+  const [ingredients, setIngredients] = useState([{ name: "", amount: "" }]);
+  const [instructions, setInstructions] = useState([""]);
 
   useEffect(() => {
-    getNotes();
+    getRecipes();
   }, []);
 
-  const getNotes = () => {
+  const handleLogout = () => {
+    navigate("/logout");
+  };
+
+  const getRecipes = () => {
     api
-      .get("/api/notes/")
+      .get("/api/recipes/")
       .then((res) => res.data)
       .then((data) => {
-        setNotes(data);
+        setRecipes(data);
         console.log(data);
       })
       .catch((err) => alert(err));
   };
 
-  const deleteNote = (id) => {
+  const deleteRecipe = (id) => {
     api
-      .delete(`/api/notes/delete/${id}/`)
+      .delete(`/api/recipes/delete/${id}/`)
       .then((res) => {
-        if (res.status === 204) alert("Note deleted!");
-        else alert("Failed to delete note.");
-        getNotes();
+        if (res.status === 204) alert("Recipe deleted!");
+        else alert("Failed to delete recipe.");
+        getRecipes();
       })
-      .catch((error) => alert(error));
+      .catch((error) => {
+        if (error.response && error.response.status === 403) {
+          alert("You don't have permission to delete this recipe.");
+        } else {
+          alert(error);
+        }
+      });
   };
 
-  const createNote = (e) => {
-    e.preventDefault();
+  const updateRecipe = (id, updatedData) => {
     api
-      .post("/api/notes/", { content, title })
+      .put(`/api/recipes/update/${id}/`, updatedData)
       .then((res) => {
-        if (res.status === 201) alert("Note created!");
-        else alert("Failed to make note.");
-        getNotes();
+        if (res.status === 200) alert("Recipe updated!");
+        else alert("Failed to update recipe.");
+        getRecipes();
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 403) {
+          alert("You don't have permission to update this recipe.");
+        } else {
+          alert(error);
+        }
+      });
+  };
+
+  const handleAddTag = (e) => {
+    e.preventDefault();
+    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+      setTags([...tags, tagInput.trim()]);
+      setTagInput("");
+    }
+  };
+
+  const handleRemoveTag = (index) => {
+    const newTags = [...tags];
+    newTags.splice(index, 1);
+    setTags(newTags);
+  };
+
+  const handleAddIngredient = () => {
+    setIngredients([...ingredients, { name: "", amount: "" }]);
+  };
+
+  const handleRemoveIngredient = (index) => {
+    const newIngredients = [...ingredients];
+    newIngredients.splice(index, 1);
+    setIngredients(newIngredients);
+  };
+
+  const handleIngredientChange = (index, field, value) => {
+    const newIngredients = [...ingredients];
+    newIngredients[index][field] = value;
+    setIngredients(newIngredients);
+  };
+
+  const handleAddInstruction = () => {
+    setInstructions([...instructions, ""]);
+  };
+
+  const handleRemoveInstruction = (index) => {
+    const newInstructions = [...instructions];
+    newInstructions.splice(index, 1);
+    setInstructions(newInstructions);
+  };
+
+  const handleInstructionChange = (index, value) => {
+    const newInstructions = [...instructions];
+    newInstructions[index] = value;
+    setInstructions(newInstructions);
+  };
+
+  const createRecipe = (e) => {
+    e.preventDefault();
+
+    // Validate ingredients and instructions
+    const validIngredients = ingredients.filter(
+      (ing) => ing.name && ing.amount
+    );
+    const validInstructions = instructions.filter((inst) => inst.trim());
+
+    if (validIngredients.length === 0) {
+      alert("Please add at least one ingredient");
+      return;
+    }
+
+    if (validInstructions.length === 0) {
+      alert("Please add at least one instruction");
+      return;
+    }
+
+    api
+      .post("/api/recipes/", {
+        title,
+        description,
+        prep_time: parseInt(prepTime),
+        cook_time: parseInt(cookTime),
+        image_url: imageUrl,
+        tags,
+        ingredients: validIngredients,
+        instructions: validInstructions,
+      })
+      .then((res) => {
+        if (res.status === 201) alert("Recipe created!");
+        else alert("Failed to create recipe.");
+        getRecipes();
+        // Clear form after successful creation
+        setTitle("");
+        setDescription("");
+        setPrepTime("");
+        setCookTime("");
+        setImageUrl("");
+        setTags([]);
+        setIngredients([{ name: "", amount: "" }]);
+        setInstructions([""]);
       })
       .catch((err) => alert(err));
   };
 
   return (
-    <div>
-      <div>
-        <h2>Notes</h2>
-        {notes.map((note) => (
-          <Note note={note} onDelete={deleteNote} key={note.id} />
-        ))}
+    <div className="home-container">
+      <div className="header">
+        <h1>Recipe App</h1>
+        <button className="logout-btn" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
-      <h2>Create a Note</h2>
-      <form onSubmit={createNote}>
-        <label htmlFor="title">Title:</label>
-        <br />
-        <input
-          type="text"
-          id="title"
-          name="title"
-          required
-          onChange={(e) => setTitle(e.target.value)}
-          value={title}
-        />
-        <label htmlFor="content">Content:</label>
-        <br />
-        <textarea
-          id="content"
-          name="content"
-          required
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        ></textarea>
-        <br />
-        <input type="submit" value="Submit"></input>
-      </form>
+      <div className="content-container">
+        <div className="recipes-feed">
+          <h2>Recipe Feed</h2>
+          <p className="feed-description">All recipes from all users</p>
+          {recipes.map((recipe) => (
+            <Recipe
+              recipe={recipe}
+              onDelete={deleteRecipe}
+              onUpdate={updateRecipe}
+              key={recipe.id}
+            />
+          ))}
+        </div>
+        <div className="create-recipe-section">
+          <h2>Create a Recipe</h2>
+          <form onSubmit={createRecipe} className="recipe-form">
+            <div className="form-group">
+              <label htmlFor="recipeTitle">Recipe Title</label>
+              <input
+                type="text"
+                id="recipeTitle"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="recipeDescription">Description</label>
+              <textarea
+                id="recipeDescription"
+                rows="3"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              ></textarea>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="prepTime">Prep Time (minutes)</label>
+                <input
+                  type="number"
+                  id="prepTime"
+                  value={prepTime}
+                  onChange={(e) => setPrepTime(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="cookTime">Cook Time (minutes)</label>
+                <input
+                  type="number"
+                  id="cookTime"
+                  value={cookTime}
+                  onChange={(e) => setCookTime(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="recipeImage">Image URL</label>
+              <input
+                type="url"
+                id="recipeImage"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="recipeTags">Tags</label>
+              <div className="tags-input">
+                <input
+                  type="text"
+                  id="recipeTags"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddTag(e);
+                    }
+                  }}
+                  placeholder="Add a tag and press Enter"
+                />
+                <div className="tags-container">
+                  {tags.map((tag, index) => (
+                    <span key={index} className="tag">
+                      {tag}
+                      <button
+                        type="button"
+                        className="remove-tag"
+                        onClick={() => handleRemoveTag(index)}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Ingredients</label>
+              <div id="ingredientsList">
+                {ingredients.map((ingredient, index) => (
+                  <div key={index} className="ingredient-row">
+                    <input
+                      type="text"
+                      placeholder="Ingredient"
+                      value={ingredient.name}
+                      onChange={(e) =>
+                        handleIngredientChange(index, "name", e.target.value)
+                      }
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="Amount"
+                      value={ingredient.amount}
+                      onChange={(e) =>
+                        handleIngredientChange(index, "amount", e.target.value)
+                      }
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="remove-btn"
+                      onClick={() => handleRemoveIngredient(index)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="add-btn"
+                onClick={handleAddIngredient}
+              >
+                Add Ingredient
+              </button>
+            </div>
+
+            <div className="form-group">
+              <label>Instructions</label>
+              <div id="instructionsList">
+                {instructions.map((instruction, index) => (
+                  <div key={index} className="instruction-row">
+                    <span className="step-number">{index + 1}</span>
+                    <textarea
+                      placeholder="Instruction step"
+                      value={instruction}
+                      onChange={(e) =>
+                        handleInstructionChange(index, e.target.value)
+                      }
+                      required
+                    ></textarea>
+                    <button
+                      type="button"
+                      className="remove-btn"
+                      onClick={() => handleRemoveInstruction(index)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="add-btn"
+                onClick={handleAddInstruction}
+              >
+                Add Step
+              </button>
+            </div>
+
+            <div className="form-actions">
+              <button type="submit" className="submit-btn">
+                Create Recipe
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
