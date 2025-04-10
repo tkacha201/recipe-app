@@ -39,7 +39,7 @@ const mongooseOptions = {
 
 // MongoDB Connection
 mongoose
-  .connect(process.env.MONGO_URI, mongooseOptions)
+  .connect(process.env.MONGODB_URI, mongooseOptions)
   .then(() => {
     console.log("Connected to MongoDB");
     console.log(`Database: ${mongoose.connection.name}`);
