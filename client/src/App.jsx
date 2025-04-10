@@ -11,17 +11,12 @@ import CreateRecipe from "./pages/CreateRecipe";
 import EditRecipe from "./pages/EditRecipe";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
 import UpdateProfile from "./pages/UpdateProfile";
 import EditProfile from "./pages/EditProfile";
 import Header from "./components/Header";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <Router>
       <Header />

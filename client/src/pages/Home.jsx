@@ -1,33 +1,33 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 
-const Home = () => {
+function Home() {
   const [popularRecipes, setPopularRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
-    const fetchRecipes = async () => {
+    async function fetchRecipes() {
       setLoading(true);
       try {
         const response = await axios.get(
           "http://localhost:5000/api/recipes/all"
         );
-        // Sort recipes by like count before slicing
+
         const sortedRecipes = [...response.data].sort(
-          (a, b) =>
-            (b.likes ? b.likes.length : 0) - (a.likes ? a.likes.length : 0)
+          (a, b) => (b.likes?.length || 0) - (a.likes?.length || 0)
         );
-        setPopularRecipes(sortedRecipes.slice(0, 4)); // Get top 4 recipes by likes
-        setLoading(false);
+
+        setPopularRecipes(sortedRecipes.slice(0, 4));
       } catch (err) {
         console.error("Error fetching recipes:", err);
         setError("Failed to load recipes");
+      } finally {
         setLoading(false);
       }
-    };
+    }
 
     fetchRecipes();
   }, [location.key]);
@@ -102,7 +102,7 @@ const Home = () => {
                           />
                         </svg>
                         <span className="text-xs font-medium">
-                          {recipe.likes ? recipe.likes.length : 0}
+                          {recipe.likes?.length || 0}
                         </span>
                       </div>
                     </div>
@@ -140,6 +140,6 @@ const Home = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Home;

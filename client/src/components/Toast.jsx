@@ -1,50 +1,42 @@
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// Success notifications
-export const showSuccess = (message) => {
-  toast.success(message, {
-    position: "top-right",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-  });
+const defaultOptions = {
+  position: "top-right",
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
 };
+
+// Success notifications
+export function showSuccess(message) {
+  toast.success(message, {
+    ...defaultOptions,
+    autoClose: 3000,
+  });
+}
 
 // Error notifications
-export const showError = (message) => {
+export function showError(message) {
   toast.error(message, {
-    position: "top-right",
+    ...defaultOptions,
     autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
   });
-};
+}
 
 // Info notifications
-export const showInfo = (message) => {
+export function showInfo(message) {
   toast.info(message, {
-    position: "top-right",
+    ...defaultOptions,
     autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
   });
-};
+}
 
 // Warning notifications
-export const showWarning = (message) => {
+export function showWarning(message) {
   toast.warning(message, {
-    position: "top-right",
+    ...defaultOptions,
     autoClose: 4000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
   });
-};
+}

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
-const Header = () => {
+function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const token = localStorage.getItem("token");
@@ -10,42 +10,35 @@ const Header = () => {
   const [username, setUsername] = useState("");
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (isAuthenticated && token) {
-        try {
-          // Get user ID from token
-          const decodedToken = JSON.parse(atob(token.split(".")[1]));
-          const userId = decodedToken.userId;
-
-          // Fetch user details
-          const response = await axios.get(
-            `http://localhost:5000/api/users/profile`,
-            {
-              headers: {
-                "x-auth-token": token,
-              },
-            }
-          );
-
-          if (response.data && response.data.name) {
-            setUsername(response.data.name);
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      } else {
+    async function fetchUserData() {
+      if (!isAuthenticated) {
         setUsername("");
+        return;
       }
-    };
+
+      try {
+        const decodedToken = JSON.parse(atob(token.split(".")[1]));
+        const response = await axios.get(
+          "http://localhost:5000/api/users/profile",
+          { headers: { "x-auth-token": token } }
+        );
+
+        if (response.data?.name) {
+          setUsername(response.data.name);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    }
 
     fetchUserData();
   }, [isAuthenticated, token, location.pathname]);
 
-  const handleLogout = () => {
+  function handleLogout() {
     localStorage.removeItem("token");
     setUsername("");
     navigate("/login");
-  };
+  }
 
   return (
     <header className="bg-white shadow-sm py-4">
@@ -97,19 +90,17 @@ const Header = () => {
               </button>
             </>
           ) : (
-            <>
-              <Link
-                to="/login"
-                className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition-colors font-medium"
-              >
-                Login
-              </Link>
-            </>
+            <Link
+              to="/login"
+              className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition-colors font-medium"
+            >
+              Login
+            </Link>
           )}
         </nav>
       </div>
     </header>
   );
-};
+}
 
 export default Header;
