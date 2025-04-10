@@ -1,0 +1,80 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+package-lock.json
+.npm/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build directories
+/build
+/dist
+/.next
+/out
+
+# IDE and editors
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.project
+.classpath
+.settings/
+
+# Testing
+/coverage
+/.nyc_output
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+.rpt2_cache/
+
+# Database
+*.sqlite
+*.db
+
+# Dependencies
+/.pnp
+.pnp.js
+
+# Misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Production builds
+/client/build
+/client/dist
+
+# Optional: Uncomment if you want to ignore uploaded files
+# /uploads/
+
+# Optional: Uncomment if you don't want to track documentation
+# /docs/ 
