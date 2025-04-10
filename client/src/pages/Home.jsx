@@ -56,6 +56,7 @@ function Home() {
           </p>
           <Link
             to="/create-recipe"
+            state={{ fromHomeShare: true }}
             className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-3 rounded-md text-lg transition-colors"
           >
             Share a Recipe

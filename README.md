@@ -33,7 +33,7 @@ npm install
 
 # Create .env with:
 # PORT=5000
-# MONGODB_URI=your_mongodb_connection_string OR //localhost:27017/recipe-app (running locally)
+# MONGODB_URI=your_mongodb_connection_string OR mongodb://localhost:27017/recipe-app (running locally)
 # JWT_SECRET=your_jwt_secret
 
 npm run dev
